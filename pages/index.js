@@ -1,15 +1,31 @@
+import { getPosts } from 'lib/data.js'
+import prisma from 'lib/prisma'
 import Head from 'next/head'
+import Posts from 'components/Posts'
 
-export default function Home() {
+
+export default function Home({ posts }) {
   return (
     <div>
       <Head>
-        <title></title>
-        <meta name='description' content='' />
+        <title>Reddit Clone</title>
+        <meta name='description' content='A great social network!' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <h1>Welcome!</h1>
+      <Posts posts={posts} />
     </div>
   )
+}
+
+// getPosts() from lib/data.js
+export async function getServerSideProps() {
+    let posts = await getPosts(prisma)
+    posts = JSON.parse(JSON.stringify(posts))
+
+    return {
+      props: {
+        posts: posts,
+      },
+    }
 }
