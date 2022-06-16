@@ -22,6 +22,9 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
+  Post    Post[]
+  Comment Comment[]
+  Vote    Vote[]
 }
 
 model VerificationToken {
@@ -61,3 +64,43 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Subreddit {
+  name        String @id
+  description String
+  posts       Post[]
+}
+
+model Post {
+  id            Int        @id @default(autoincrement())
+  title         String
+  content       String
+  image         String?
+  createdAt     DateTime   @default(now())
+  author        User       @relation(fields: [authorId], references: [id])
+  authorId      String
+  comments      Comment[]
+  subreddit     Subreddit? @relation(fields: [subredditName], references: [name])
+  subredditName String?
+  Vote          Vote[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
+}
+
+model Vote {
+  id       Int     @id @default(autoincrement())
+  up       Boolean
+  author   User    @relation(fields: [authorId], references: [id])
+  authorId String
+  post     Post?   @relation(fields: [postId], references: [id])
+  postId   Int?
+
+  @@unique([authorId, postId])
+}

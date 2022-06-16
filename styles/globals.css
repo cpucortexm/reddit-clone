@@ -4,10 +4,10 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  /* uncomment for "dark mode"
+  /* uncomment for "dark mode" 
   background-color: black;
-  color: white;
-  */
+  color: white;*/
+
 }
 
 a {
@@ -19,6 +19,22 @@ a {
   box-sizing: border-box;
 }
 
+/*
+This CSS automatically applies dark mode if your operating system supports it
+and automatically switches at specific times:
+
+@media (prefers-color-scheme: dark) {
+  html {
+    filter: invert(100%);
+  }
+
+  img {
+    filter: invert(100%);
+  }
+}
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
