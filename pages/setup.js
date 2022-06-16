@@ -60,7 +60,7 @@ export default function Setup() {
                     pattern='\w*'
                     title='Numbers or letters or _ only'
                     placeholder='Numbers or letters or _ only'
-                    minlength='5'
+                    minLength='5'
                     />
             </div>
             <button className='border px-8 py-2 mt-0 mr-8 font-bold rounded-full color-accent-contrast bg-color-accent hover:bg-color-accent-hover'>
