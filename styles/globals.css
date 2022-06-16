@@ -6,7 +6,8 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   /* uncomment for "dark mode" 
   background-color: black;
-  color: white;*/
+  color: white;
+  */
 
 }
 
@@ -18,6 +19,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
 
 /*
 This CSS automatically applies dark mode if your operating system supports it
@@ -37,4 +39,3 @@ and automatically switches at specific times:
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
