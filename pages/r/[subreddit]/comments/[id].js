@@ -10,6 +10,7 @@ import Link from 'next/link'
 import timeago from 'lib/timeago'
 import NewComment from 'components/NewComment'
 import { useSession } from 'next-auth/react'
+import Comments from 'components/Comments'
 
 export default function Post({ subreddit, post }){
     const { data: session, status } = useSession()
@@ -66,8 +67,9 @@ export default function Post({ subreddit, post }){
                         to add a comment
                     </p>
             )}
+            {/* post already contains the comments associated with it */}
+            <Comments comments={post.comments} />
         </div>
-
         </>
     )
 }
