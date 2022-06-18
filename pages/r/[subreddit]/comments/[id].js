@@ -4,17 +4,20 @@
 
 // This file is triggered from components/Post.js
 
+// Also handles voting - up/down
+
 import prisma from 'lib/prisma'
-import { getPost, getSubreddit } from 'lib/data.js'
+import { getPost, getSubreddit, getVote, getVotes } from 'lib/data.js'
 import Link from 'next/link'
 import timeago from 'lib/timeago'
 import NewComment from 'components/NewComment'
-import { useSession } from 'next-auth/react'
+import { useSession, getSession } from 'next-auth/react'
 import Comments from 'components/Comments'
+import { useRouter } from 'next/router'
 
-export default function Post({ subreddit, post }){
+export default function Post({ subreddit, post, votes, vote }){
     const { data: session, status } = useSession()
-
+    const router = useRouter()
     const loading = status === 'loading'
 
     if (loading) {
@@ -22,6 +25,23 @@ export default function Post({ subreddit, post }){
     }
 
     if (!post) return <p className='text-center p-5'>Post does not exist 😞</p>
+
+    const sendVote = async (up) => {
+        const requestParams = {
+            body: JSON.stringify({
+                    post: post.id,
+                    up,
+                }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+        }
+
+        await fetch('/api/vote', requestParams)
+        router.reload(window.location.pathname)
+    }
+
     return (
         <>
         <header className='bg-black text-white h-12 flex pt-3 px-5 pb-2'>
@@ -36,7 +56,33 @@ export default function Post({ subreddit, post }){
             </Link>
                 <p className='ml-4 text-left grow'>{subreddit.description}</p>
         </header>
-        <div className='flex flex-col mb-4 border border-3 border-black p-10 bg-gray-200 mx-20 my-10'>
+
+    <div className='flex flex-row mb-4  px-10 justify-center'>
+        <div className='flex flex-col mb-4 border-t border-l border-b border-3 border-black p-10 bg-gray-200 my-10 text-center'>
+          <div
+            className='cursor-pointer'
+            onClick={async (e) => {
+                        e.preventDefault()
+                        sendVote(true)
+                    }}
+          >
+            {/* If there is a vote and if it is Up then fat up arrow else thin up arrow*/}
+           {vote?.up ? '⬆' : '↑'}
+          </div>
+          <div>{votes}</div>
+          <div
+            className='cursor-pointer'
+            onClick={async (e) => {
+                        e.preventDefault()
+                        sendVote(false)
+                    }}
+          >
+            {/* If there is no vote then thin down arrow, else if there is an upvote then also 
+             a thin down arrow else (means a downvote) thus a fat down arrow */}
+            {!vote ? '↓' : vote?.up ? '↓' : '⬇'}
+          </div>
+        </div>
+        <div className='flex flex-col mb-4 border-t border-r border-b border-3 border-black p-10 pl-0 bg-gray-200 my-10'>
             <div className='flex flex-shrink-0 pb-0 '>
              <div className='flex-shrink-0 block group '>
                 <div className='flex items-center text-gray-800'>
@@ -70,19 +116,34 @@ export default function Post({ subreddit, post }){
             {/* post already contains the comments associated with it */}
             <Comments comments={post.comments} />
         </div>
+    </div>
         </>
     )
 }
 
-export async function getServerSideProps({ params }) {
-    const subreddit = await getSubreddit(params.subreddit, prisma)
-    let post = await getPost(parseInt(params.id), prisma)
+//read from lib/data.js
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
+    const subreddit = await getSubreddit(context.params.subreddit, prisma)
+    let post = await getPost(parseInt(context.params.id), prisma)
     post = JSON.parse(JSON.stringify(post))
 
+    // get total votes
+    let votes = await getVotes(parseInt(context.params.id), prisma)
+    votes = JSON.parse(JSON.stringify(votes))
+    // get users vote
+    let vote = await getVote(
+                        parseInt(context.params.id),
+                        session?.user.id, // This is done to prevent an error if the user is not logged in
+                        prisma
+               )
+    vote = JSON.parse(JSON.stringify(vote))
     return {
         props: {
             subreddit,
             post,
+            vote,
+            votes,
         },
     }
 }
