@@ -58,9 +58,11 @@ export default function Post({ subreddit, post }){
                   <NewComment post={post} />
                 ) : (
                     <p className='mt-5'>
-                    <a className='mr-1 underline' href='/api/auth/signin'>
-                        Login
-                    </a>
+                    <Link href='/api/auth/signin'>
+                        <a className='mr-1 underline'>
+                            Login
+                        </a>
+                    </Link>
                         to add a comment
                     </p>
             )}
