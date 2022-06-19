@@ -1,6 +1,10 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// ? means an optional field
+// What is a foreign key ?
+// In Post table, foreign key named authorId that refers to the id column of the User table
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -92,6 +96,12 @@ model Comment {
   authorId  String
   post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
+
+  // Prisma model self relation (comments on comment)
+  parentId Int?
+  parent   Comment?  @relation("ParentComment", fields: [parentId], references: [id])
+  Comment  Comment[] @relation("ParentComment")
+
 }
 
 model Vote {

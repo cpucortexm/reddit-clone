@@ -114,7 +114,7 @@ export default function Post({ subreddit, post, votes, vote }){
                     </p>
             )}
             {/* post already contains the comments associated with it */}
-            <Comments comments={post.comments} />
+            <Comments comments={post.comments} post={post} />
         </div>
     </div>
         </>

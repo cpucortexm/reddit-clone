@@ -4,7 +4,10 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
-export default function NewComment({ post }) {
+
+// Need to have some more information in the `NewComment` component.
+// i.e. must know the comment too, because now a comment can be made to a comment, not just a post.
+export default function NewComment({ post, comment }) {
   const router = useRouter()
   const [content, setContent] = useState('')
 
@@ -17,6 +20,12 @@ export default function NewComment({ post }) {
     const requestParams = {
         body: JSON.stringify({
                     post: post.id,
+    // In case we reply to a comment, i.e current? exists, then the current comment.id will be 
+    // the parent, and we pass this info
+                    comment: comment?.id, //for each comment we send the post information,
+                                         // but also a “parent comment” id, and if we have
+                                         // this information we send it when we make the 
+                                         // POST call to /api/comment:
                     content: content,
                 }),
         headers: {
