@@ -10,6 +10,7 @@
 import timeago from 'lib/timeago'
 import { useState } from 'react'
 import NewComment from 'components/NewComment'
+import Link from 'next/link'
 
 // put a “reply” text below each comment
 const Comment = ({ comment, post }) => {
